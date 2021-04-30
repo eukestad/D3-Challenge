@@ -6,7 +6,7 @@ var margin = {
   top: 20,
   right: 40,
   bottom: 80,
-  left: 100
+  left: 40
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -53,11 +53,15 @@ function renderAxes(newXScale, xAxis) {
 
 // function used for updating circles group with a transition to
 // new circles
-function renderCircles(circlesGroup, newXScale, chosenXAxis) {
+function renderCircles(circlesGroup, circleTextGroup, newXScale, chosenXAxis) {
 
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
+
+  circleTextGroup.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[chosenXAxis]));
 
   return circlesGroup;
 }
@@ -78,7 +82,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   }
 
   var toolTip = d3.tip()
-    .attr("class", "tooltip")
+    .attr("class", "d3-tip")
     .offset([80, -60])
     .html(function(d) {
       return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
@@ -95,7 +99,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     });
 
   return circlesGroup;
-}
+};
 
 // Retrieve data from the CSV file and execute everything below
 d3.csv("assets/data/data.csv").then(function(stateData, err) {
@@ -105,10 +109,8 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
   stateData.forEach(function(data) {
     data.poverty = +data.poverty;
     data.age = +data.age;
-    data.income = +data.income;
     data.healthcare = +data.healthcare;
     data.obesity = +data.obesity;
-    data.smokes = +data.smokes;
   });
 
   // xLinearScale function above csv import
@@ -140,15 +142,23 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d.poverty))
-    .attr("r", 20)
-    .classed("stateCircle")
-    .attr("class", "text stateText");
-    // .text(d => `<text style="color:white">${d.abbr}</text>`);
+    .attr("r", 10)
+    .style("fill", "#89bdd3")
+    .style("stroke", "#e3e3e3");
+
 
   var circleTextGroup = chartGroup.selectAll("text")
     .data(stateData)
     .enter()
     .append("text")
+    .attr("x", d => xLinearScale(d[chosenXAxis]))
+    .attr("y", d => yLinearScale(d.poverty)+2)
+    .text(d => d.abbr)
+    .style("font-family", "sans-serif")
+    .style("fill", "#fff")
+    .style("text-anchor", "middle")    
+    .style("font-size", "10px");
+
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -207,7 +217,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
         xAxis = renderAxes(xLinearScale, xAxis);
 
         // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+        circlesGroup = renderCircles(circlesGroup, circleTextGroup, xLinearScale, chosenXAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);

@@ -1,6 +1,8 @@
 # user edits
 Instructions/
 *.code-workspace
+new.js
+app_old.js
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
