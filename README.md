@@ -9,7 +9,7 @@ The purpose of this project is to analyze the current trends shaping people's li
 Analysis is shown in an interactive scatter plot of of the data that features tooltips and points labeled with the respective state abbreviation.
 
 ## Status
-_in progress_
+_finished_
 
 ## Inspiration
 This project was assigned as part of the UTSA Data Analytics Bootcamp.

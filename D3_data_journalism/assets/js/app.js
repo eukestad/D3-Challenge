@@ -1,6 +1,6 @@
 // @TODO: YOUR CODE HERE!
-var svgWidth = 960;
-var svgHeight = 500;
+var svgWidth = 1000;
+var svgHeight = 800;
 
 var margin = {
   top: 20,
@@ -72,20 +72,20 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   var label;
 
   if (chosenXAxis === "obesity") {
-    label = "Obesity:";
+    label = "Has Obesity (5):";
   }
   else if (chosenXAxis === "age") {
-    label = "Age:";
+    label = "Median Age:";
   }
   else {
-    label = "Health Care:";
+    label = "Lacks Healthcare (%):";
   }
 
   var toolTip = d3.tip()
     .attr("class", "d3-tip")
     .offset([80, -60])
     .html(function(d) {
-      return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
+      return (`${d.state}<br> Poverty: ${d.poverty}<br>${label} ${d[chosenXAxis]}`);
     });
 
   circlesGroup.call(toolTip);
@@ -118,9 +118,12 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(stateData, d => d.poverty)])
-    .range([height, 0]);
-
+    // .domain([0, d3.max(stateData, d => d.poverty)])
+    // .range([height, 0]);
+    .domain([d3.min(stateData, d => d.poverty) * 0.8,
+    d3.max(stateData, d => d.poverty) * 1.2
+  ]).range([height, 0]);
+  
   // Create initial axis functions
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
